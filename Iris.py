@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LinearRegression
 
 all_data = load_iris(return_X_y=False, as_frame=True)
 pprint(all_data)
@@ -24,14 +25,14 @@ X, y = features, labels
 
 # randomized and strategically split reain and test data.
 X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                    train_size=0.90,
-                                                    random_state=42,
+                                                    train_size=0.85,
+                                                    random_state=50,
                                                     stratify=y)
 
 
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train,
                                                     train_size=0.85,
-                                                    random_state=42,
+                                                    random_state=50,
                                                     stratify=y_train)
 
 print(f"Train labels:\n{y_train}")
@@ -61,6 +62,10 @@ for column in features.columns:
 # As below, this is how to print NaN sum for data not technically in a column.
 print(labels.isna().sum())
 
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#RandomForestClassifier
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+print("Random Forest Clasieier Model")
 rf = RandomForestClassifier(n_estimators = 100, random_state = 42)
 rf.fit(Train_Features, Train_Labels)
 print(rf)
@@ -73,3 +78,26 @@ print(predict)
 print(Val_Labels.values)
 
 print('accuracy_score: ', accuracy_score(Val_Labels, predict))
+# Model predicts at 95% with RandomForestClassifier on val set.
+
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+#Linear Regression
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+print("Linear Regression Model")
+
+Reg = LinearRegression().fit(Train_Features, Train_Labels)
+predict = Reg.predict(Val_Features)
+print(predict)
+# The predictions automatically produce floats which cuses problems with scoring
+# the acuracy later. Below I transformed the values into intigers.
+
+preds = list() # To create a new list of intigers from the float values.
+for each_prediction in predict:
+    newnum = round(each_prediction, 0) # Round the values to 0 decimal places.
+    preds.append(int(newnum)) # To append the list with the new values.
+
+print(np.asarray(preds))
+# Our validation lbels are presented as numpy array and so I converted my
+# new prediction values to a numpy array as above for easy comparison.
+print(Val_Labels.values)
+print('accuracy_score: ', accuracy_score(Val_Labels, preds))
