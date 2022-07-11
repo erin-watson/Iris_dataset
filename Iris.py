@@ -5,6 +5,7 @@ from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
 all_data = load_iris(return_X_y=False, as_frame=True)
 pprint(all_data)
@@ -37,9 +38,17 @@ print(f"Train labels:\n{y_train}")
 print(f"Val labels:\n{y_val}")
 print(f"Test labels:\n{y_test}")
 
+Train_Labels = y_train
+Val_Labels = y_val
+Test_Labels = y_test
+
 print(f"Train features:\n{X_train}")
 print(f"Val features:\n{X_val}")
 print(f"Test features:\n{X_test}")
+
+Train_Features = X_train
+Val_Features = X_val
+Test_Features = X_test
 
 # Checking all flower types exist in eaqual preportions in the train and test set.
 print(y_train.value_counts(normalize=True))
@@ -53,7 +62,14 @@ for column in features.columns:
 print(labels.isna().sum())
 
 rf = RandomForestClassifier(n_estimators = 100, random_state = 42)
-rf.fit(features, labels)
+rf.fit(Train_Features, Train_Labels)
 print(rf)
 importances = rf.feature_importances_
 print(importances)
+
+predict = rf.predict(Val_Features)
+print(predict)
+
+print(Val_Labels.values)
+
+print('accuracy_score: ', accuracy_score(Val_Labels, predict))
