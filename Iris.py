@@ -21,18 +21,39 @@ labels = all_data['target']
 
 X, y = features, labels
 
-
+# randomized and strategically split reain and test data.
 X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                    train_size=0.85,
+                                                    train_size=0.90,
                                                     random_state=42,
                                                     stratify=y)
 
+
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train,
+                                                    train_size=0.85,
+                                                    random_state=42,
+                                                    stratify=y_train)
+
 print(f"Train labels:\n{y_train}")
+print(f"Val labels:\n{y_val}")
 print(f"Test labels:\n{y_test}")
 
 print(f"Train features:\n{X_train}")
+print(f"Val features:\n{X_val}")
 print(f"Test features:\n{X_test}")
 
 # Checking all flower types exist in eaqual preportions in the train and test set.
 print(y_train.value_counts(normalize=True))
+print(y_val.value_counts(normalize=True))
 print(y_test.value_counts(normalize=True))
+
+# Print NaN sum for eaach column.
+for column in features.columns:
+    print(features[column].isna().sum())
+# As below, this is how to print NaN sum for data not technically in a column.
+print(labels.isna().sum())
+
+rf = RandomForestClassifier(n_estimators = 100, random_state = 42)
+rf.fit(features, labels)
+print(rf)
+importances = rf.feature_importances_
+print(importances)
